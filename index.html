@@ -385,4 +385,66 @@
             document.getElementById(stepId).classList.add('active');
             currentStepNumber++;
             document.getElementById('currentStep').textContent = currentStepNumber;
-            document.getElementById('backButton').
+            document.getElementById('backButton').style.display = currentPath.length > 0 ? 'inline' : 'none';
+            document.getElementById('startOverButton').style.display = 'inline';
+        }
+
+        function previousStep() {
+            if (currentPath.length > 0) {
+                currentPath.pop(); // Remove current step
+                currentStepNumber--;
+                
+                if (currentPath.length === 0) {
+                    // If we're back at the start
+                    document.querySelectorAll('.step').forEach(step => step.classList.remove('active'));
+                    document.getElementById('step1').classList.add('active');
+                    document.getElementById('backButton').style.display = 'none';
+                } else {
+                    // Show the previous step
+                    document.querySelectorAll('.step').forEach(step => step.classList.remove('active'));
+                    document.getElementById(currentPath[currentPath.length - 1]).classList.add('active');
+                }
+                
+                document.getElementById('currentStep').textContent = currentStepNumber;
+            }
+        }
+
+        function startOver() {
+            currentStepNumber = 1;
+            currentPath = [];
+            choices = {};
+            document.querySelectorAll('.step').forEach(step => step.classList.remove('active'));
+            document.getElementById('step1').classList.add('active');
+            document.getElementById('currentStep').textContent = 1;
+            document.getElementById('backButton').style.display = 'none';
+            document.getElementById('startOverButton').style.display = 'none';
+        }
+
+        function showSummary() {
+            let summaryHTML = `
+                <div class="step active">
+                    <h2>Investigation Summary</h2>
+                    <div class="info">
+                        <h3>Key Decisions:</h3>
+                        <ul>`;
+            
+            for (let step in choices) {
+                summaryHTML += `<li>${step}: ${choices[step]}</li>`;
+            }
+            
+            summaryHTML += `
+                        </ul>
+                    </div>
+                    <div class="alert">
+                        <p>Investigation is complete. Please ensure all documentation is properly filed and all required actions have been taken.</p>
+                    </div>
+                </div>`;
+            
+            document.querySelector('.card').innerHTML = summaryHTML + `
+                <div class="navigation-buttons">
+                    <button onclick="startOver()" id="startOverButton">Start New Investigation</button>
+                </div>`;
+        }
+    </script>
+</body>
+</html>
